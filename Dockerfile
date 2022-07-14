@@ -8,7 +8,7 @@ ENV SHELL=/bin/sh \
 WORKDIR /tmp
 COPY . /tmp
 
-RUN --mount=type=cache,target=/root/.cache/ccache \
+RUN \
     cd /tmp \
     && ls /tmp \
     && apk update \
