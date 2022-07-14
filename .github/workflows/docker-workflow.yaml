@@ -14,6 +14,11 @@ jobs:
         with:
           path: ccache
           key: ${{ runner.os }}-ccache
+      - name: Create ccache cache
+        if: steps.cache-ccache.outputs.cache-hit != 'true'
+        shell: bash
+        run: |
+          mkdir -p ccache
       - name: Build the image
         shell: bash
         run: |
