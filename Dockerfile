@@ -8,19 +8,22 @@ ENV SHELL=/bin/sh \
 WORKDIR /tmp
 COPY . /tmp
 
-RUN --mount=type=cache,target=/root/.cache/ccache --mount=type=tmpfs,target=/tmp \
+RUN --mount=type=cache,target=/root/.cache/ccache \
     cd /tmp \
     && ls /tmp \
     && apk update \
     && apk upgrade \
 # Install libraries
 # Install development tools
-    && apk add --no-cache --virtual .dev-deps \
-        ccache clang gcc cmake ninja musl-dev \
+    && apk add --no-cache libstdc++ \
+    && apk add --no-cache --virtual .dev-deps  \
+        ccache clang gcc g++ cmake ninja musl-dev \
     && ccache -s \
 # Build Python
     && cd /tmp \
     && cmake -G"Ninja" -DCMAKE_C_FLAGS="-O3" -DCMAKE_CXX_FLAGS="-O3" -DCMAKE_BUILD_TYPE=Release . \
     && cmake --build . --config Release --parallel 4 \
 # Build Panda3D
-    && ccache -s
+    && ccache -s \
+    && apk del .dev-deps \
+    && rm -rf /tmp
