@@ -13,9 +13,12 @@ jobs:
         uses: docker/setup-buildx-action@v2
         with:
           version: latest
-      - name: Cache Docker build
-        uses: satackey/action-docker-layer-caching@v0.0.11
-        continue-on-error: true
       - name: Build the image
-        run: |
-          docker buildx build --tag "test-docker:latest" --platform linux/amd64 --progress plain .
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          push: false
+          tags: registry.gitlab.com/user/app:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          platforms: linux/amd64
