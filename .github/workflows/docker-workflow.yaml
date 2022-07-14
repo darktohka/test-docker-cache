@@ -1,0 +1,21 @@
+ame: Autobuild for Docker
+
+on: [push, workflow_dispatch, repository_dispatch]
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Install builder plugin
+        id: buildx
+        uses: docker/setup-buildx-action@v2
+        with:
+          version: latest
+      - name: Cache Docker build
+        uses: satackey/action-docker-layer-caching@v0.0.11
+        continue-on-error: true
+      - name: Build the image
+        run: |
+          docker buildx build --tag "test-docker:latest" --platform linux/amd64 --progress plain .
